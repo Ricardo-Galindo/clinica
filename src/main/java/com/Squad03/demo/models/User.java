@@ -24,6 +24,17 @@ public class User {
     @Column(nullable = false,length = 20)
     private String phone;
 
+    @Column(nullable = true)
+    private String created_by;
+
+    public String getCreatedBy() {
+        return created_by;
+    }
+
+    public void setCreatedBy(String created_by) {
+        this.created_by = created_by;
+    }
+
     public String getPhone() {
         return phone;
     }

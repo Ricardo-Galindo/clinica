@@ -28,6 +28,17 @@ public class Appointment {
     @Column(nullable = true,length = 255)
     private String observations;
 
+    @Column(nullable = true)
+    private String created_by;
+
+    public String getCreatedBy() {
+        return created_by;
+    }
+
+    public void setCreatedBy(String created_by) {
+        this.created_by = created_by;
+    }
+
     public String getObservations() {
         return observations;
     }
