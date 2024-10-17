@@ -1,15 +1,16 @@
-package com.Squad03.demo.model;
+package com.Squad03.demo.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class TreatmentType {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(nullable = false)
     private String type;
+
+    @Column(nullable = false)
+    private String schedule;
 
     public String getType() {
         return type;
@@ -19,11 +20,15 @@ public class TreatmentType {
         this.type = type;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getId() {
         return id;
+    }
+
+    public String getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(String schedule) {
+        this.schedule = schedule;
     }
 }
