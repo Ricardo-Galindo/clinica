@@ -1,26 +1,38 @@
 package com.Squad03.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 
 import java.util.UUID;
 
 
 @Entity
+@Table(name = "Users")
 public class User {
 
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @Column(nullable = false)
+    @NotBlank()
     private String name;
+
     @Enumerated(EnumType.STRING)
+    @NotNull
     @Column(nullable = false)
     private UserType userType;
 
     @Column(nullable = false,unique = true,length = 255)
+    @Email()
+    @NotBlank()
     private String email;
     @Column(nullable = false,length = 30)
+    @NotBlank()
     private String password;
-
+    @NotBlank
+    @Pattern(regexp = "^\\([1-9]{2}\\) 9[1-9][0-9]{3}-[0-9]{4}$", message = "Número de celular inválido")
     @Column(nullable = false,length = 20)
     private String phone;
 

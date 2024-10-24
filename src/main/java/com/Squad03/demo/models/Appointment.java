@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
+@Table(name = "Appointments")
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

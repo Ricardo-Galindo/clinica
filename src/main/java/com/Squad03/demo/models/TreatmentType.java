@@ -1,15 +1,21 @@
 package com.Squad03.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
+import java.util.UUID;
 
 @Entity
+@Table(name = "Treatment_types")
 public class TreatmentType {
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
     @Column(nullable = false)
+    @NotBlank()
     private String type;
 
     @Column(nullable = false)
+    @NotBlank()
     private String schedule;
 
     public String getType() {
@@ -20,7 +26,7 @@ public class TreatmentType {
         this.type = type;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
