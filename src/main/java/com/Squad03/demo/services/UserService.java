@@ -2,7 +2,9 @@ package com.Squad03.demo.services;
 import com.Squad03.demo.models.User;
 import com.Squad03.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.UUID;
 import java.util.Optional;
@@ -21,17 +23,17 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(UUID id) throws Exception {
+    public User getUserById(UUID id){
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             return user.get();
         } else {
-            throw new Exception("Usuário não encontrado com ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
         }
     }
 
 
-    public User updateUserById(UUID id, User newUserData) throws Exception {
+    public User updateUserById(UUID id, User newUserData){
         Optional<User> existingUser = userRepository.findById(id);
 
         if (existingUser.isPresent()) {
@@ -41,7 +43,7 @@ public class UserService {
 
             return userRepository.save(userToUpdate);
         } else {
-            throw new Exception("Usuário não encontrado com ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
         }
     }
 
@@ -50,11 +52,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteUserById(UUID id) throws Exception {
+    public void deleteUserById(UUID id) {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         } else {
-            throw new Exception("Usuário não encontrado com ID: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
         }
     }
 

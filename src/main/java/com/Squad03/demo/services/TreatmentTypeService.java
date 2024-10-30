@@ -4,7 +4,9 @@ import com.Squad03.demo.models.TreatmentType;
 import com.Squad03.demo.models.User;
 import com.Squad03.demo.repository.TreatmentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,13 +27,13 @@ public class TreatmentTypeService {
         return  treatmentTypeRepository.findAll();
     }
 
-    public TreatmentType getTreatmentTypeById(UUID id) throws Exception{
+    public TreatmentType getTreatmentTypeById(UUID id){
         Optional<TreatmentType> treatmentType = treatmentTypeRepository.findById(id);
         if (treatmentType.isPresent()){
            return treatmentType.get();
         }
         else{
-            throw new Exception("Tipo de tratamento não encontrado!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de tratamento não encontrado!");
         }
     }
 
@@ -39,18 +41,18 @@ public class TreatmentTypeService {
         return treatmentTypeRepository.save(treatmentType);
     }
 
-    public TreatmentType getTreatmentTypeByType(String type) throws Exception{
+    public TreatmentType getTreatmentTypeByType(String type){
         Optional<TreatmentType> treatmentType = treatmentTypeRepository.findTreatmentTypeByType(type);
 
         if (treatmentType.isPresent()){
             return treatmentType.get();
         }
         else{
-            throw new Exception("Tipo de atendimento não encontrado!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de consulta não encontrado");
         }
     }
 
-    public TreatmentType updateTreatmentTypeById(UUID id, TreatmentType newTreatmentTypeData) throws Exception {
+    public TreatmentType updateTreatmentTypeById(UUID id, TreatmentType newTreatmentTypeData){
         Optional<TreatmentType> existingTreatmentType = treatmentTypeRepository.findById(id);
 
         if (existingTreatmentType.isPresent()) {
@@ -60,16 +62,16 @@ public class TreatmentTypeService {
 
             return treatmentTypeRepository.save(treatmentTypeUpToDate);
         } else {
-            throw new Exception("Tipo de atendimento não encontrado!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de consulta não encontrado");
         }
     }
 
-    public void deleteTreatmentTypeById(UUID id) throws  Exception{
+    public void deleteTreatmentTypeById(UUID id){
         if(treatmentTypeRepository.existsById(id)){
             treatmentTypeRepository.deleteById(id);
         }
         else{
-            throw new Exception("Tipo de atendimento não encontrado!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Tipo de consulta não encontrado");
         }
     }
 

@@ -30,14 +30,14 @@ public class Appointment {
     private String observations;
 
     @Column(nullable = true)
-    private String created_by;
+    private String createdBy;
 
     public String getCreatedBy() {
-        return created_by;
+        return createdBy;
     }
 
     public void setCreatedBy(String created_by) {
-        this.created_by = created_by;
+        this.createdBy = created_by;
     }
 
     public String getObservations() {
