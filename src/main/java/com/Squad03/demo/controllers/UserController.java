@@ -46,8 +46,6 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUserById(@PathVariable UUID id) throws Exception {
         userService.deleteUserById(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Usuário com ID: " + id + " foi excluído com sucesso!");
+        return ResponseEntity.status(HttpStatus.OK).body("Usuário com ID: " + id + " foi excluído com sucesso!");
     }
-
-
 }

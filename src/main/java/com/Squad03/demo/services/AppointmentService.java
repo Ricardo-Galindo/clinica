@@ -1,13 +1,9 @@
 package com.Squad03.demo.services;
-import com.Squad03.demo.controllers.UserController;
 import com.Squad03.demo.dto.AppointmentRequest;
 import com.Squad03.demo.models.Appointment;
-import com.Squad03.demo.models.User;
 import com.Squad03.demo.repository.AppointmentRepository;
-import com.Squad03.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -19,11 +15,10 @@ import java.util.UUID;
 public class AppointmentService {
 
     @Autowired
-    private AppointmentRepository appointmentRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Autowired
     private UserService userService;
-
 
     public AppointmentService(AppointmentRepository appointmentRepository){
         this.appointmentRepository = appointmentRepository;
@@ -48,7 +43,6 @@ public class AppointmentService {
         return  appointmentRepository.findAll();
     }
 
-
     public Appointment getAppointmentById(UUID id) {
         Optional<Appointment> appointment = appointmentRepository.findById(id);
         if(appointment.isPresent()){
@@ -59,15 +53,39 @@ public class AppointmentService {
         }
     }
 
-//    public Appointment updateAppointmentById(UUID id, Appointment newAppointmentData) {
-//        Optional<Appointment> appointment = appointmentRepository.findById(id);
-//        if(appointment.isPresent()){
-//            Appointment appointmentToUpdate = appointment.get();
-//            ResponseEntity<User> scheduledResponsible = userController.getUserById(appointmentToUpdate.getResponsible().getId());
-//            ResponseEntity<User> scheduledStudent = userController.getUserById(appointmentToUpdate.getStudent().getId());
-//
-//
-//        }
-//    }
+    public Appointment updateAppointmentById(UUID id, AppointmentRequest newAppointmentData) {
+        Optional<Appointment> appointment = appointmentRepository.findById(id);
+        if (appointment.isPresent()) {
+            Appointment appointmentToUpdate = appointment.get();
+            if (newAppointmentData.getResponsibleId() != null) {
+                appointmentToUpdate.setResponsible(userService.getUserById(newAppointmentData.getResponsibleId()));
+            }
+            if (newAppointmentData.getPacientId() != null) {
+                appointmentToUpdate.setPacient(userService.getUserById(newAppointmentData.getPacientId()));
+            }
+            if (newAppointmentData.getStudentId() != null) {
+                appointmentToUpdate.setStudent(userService.getUserById(newAppointmentData.getStudentId()));
+            }
+            if (newAppointmentData.getObservations() != null) {
+                appointmentToUpdate.setObservations(newAppointmentData.getObservations());
+            }
+            if (newAppointmentData.getCreatedBy() != null) {
+                appointmentToUpdate.setCreatedBy(newAppointmentData.getCreatedBy());
+            }
+            if (newAppointmentData.getSchedule() != null) {
+                appointmentToUpdate.setSchedule(newAppointmentData.getSchedule());
+            }
 
+            return appointmentRepository.save(appointmentToUpdate);
+        }
+        return null;
+    }
+
+    public void deleteAppointmentById(UUID id) {
+        if (appointmentRepository.existsById(id)) {
+            appointmentRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Consulta não encontrada");
+        }
+    }
 }
