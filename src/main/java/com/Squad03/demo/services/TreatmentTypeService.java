@@ -22,7 +22,6 @@ public class TreatmentTypeService {
         this.treatmentTypeRepository = treatmentTypeRepository;
     }
 
-
     public List<TreatmentType> getAllTreatmentTypes() {
         return  treatmentTypeRepository.findAll();
     }
