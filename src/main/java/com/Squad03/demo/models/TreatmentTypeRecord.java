@@ -50,5 +50,9 @@ public class TreatmentTypeRecord {
     public void setStudent(User student) {
         this.student = student;
     }
+
+    public void setId(UUID id) {
+
+    }
 }
 
