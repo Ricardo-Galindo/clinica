@@ -1,6 +1,7 @@
 package com.Squad03.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.UUID;
 
@@ -29,14 +30,40 @@ public class Appointment {
     @Column(nullable = true,length = 255)
     private String observations;
 
-    @Column(nullable = true)
-    private String createdBy;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(nullable = false)
+    private AppointmentStatus status = AppointmentStatus.PENDING;
 
-    public String getCreatedBy() {
+    public AppointmentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AppointmentStatus status) {
+        this.status = status;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(nullable = false)
+    private CreatedByType createdBy;
+
+    public enum CreatedByType{
+        RECEPCIONISTA,
+        PACIENTE
+    }
+
+    public enum AppointmentStatus{
+        CONFIRMED,
+        PENDING,
+        CANCELLED
+    }
+
+    public CreatedByType getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(String created_by) {
+    public void setCreatedBy(CreatedByType created_by) {
         this.createdBy = created_by;
     }
 

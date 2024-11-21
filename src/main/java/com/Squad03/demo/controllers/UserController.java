@@ -1,4 +1,5 @@
 package com.Squad03.demo.controllers;
+import com.Squad03.demo.dto.UserResponseDTO;
 import com.Squad03.demo.models.User;
 import com.Squad03.demo.services.UserService;
 import jakarta.validation.Valid;
@@ -20,27 +21,30 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user){
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody User user){
         User newUser = userService.saveUser(user);
-        return  ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+        UserResponseDTO dto = userService.convertToResponseDTO(newUser);
+        return  ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable UUID id){
+    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable UUID id){
         User currentUser = userService.getUserById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(currentUser);
+        UserResponseDTO dto = userService.convertToResponseDTO(currentUser);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> allUsers = userService.getAllUsers();
+    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+        List<UserResponseDTO> allUsers = userService.getAllUsers();
         return ResponseEntity.status(HttpStatus.OK).body(allUsers);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserById(@PathVariable UUID id, @RequestBody User newUserData){
+    public ResponseEntity<UserResponseDTO> updateUserById(@PathVariable UUID id, @RequestBody User newUserData){
         User updatedUser = userService.updateUserById(id, newUserData);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
+        UserResponseDTO dto = userService.convertToResponseDTO(updatedUser);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @DeleteMapping("/{id}")

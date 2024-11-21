@@ -1,5 +1,6 @@
 package com.Squad03.demo.services;
-import com.Squad03.demo.dto.AppointmentRequest;
+import com.Squad03.demo.dto.AppointmentRequestDTO;
+import com.Squad03.demo.dto.AppointmentResponseDTO;
 import com.Squad03.demo.models.Appointment;
 import com.Squad03.demo.repository.AppointmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +25,40 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
-    public Appointment saveAppointment(AppointmentRequest appointmentRequest) {
-        System.out.println(appointmentRequest.getStudentId().toString());
-        var pacient = userService.getUserById(appointmentRequest.getPacientId());
-        var responsible = userService.getUserById(appointmentRequest.getResponsibleId());
-        var student = userService.getUserById(appointmentRequest.getStudentId());
+    public AppointmentResponseDTO convertToResponseDTO(Appointment appointment) {
+        return new AppointmentResponseDTO(
+                appointment.getId(),
+                appointment.getPacient().getId(),
+                appointment.getPacient().getName(),
+                appointment.getResponsible().getId(),
+                appointment.getResponsible().getName(),
+                appointment.getStudent().getId(),
+                appointment.getStudent().getName(),
+                appointment.getSchedule(),
+                appointment.getObservations(),
+                appointment.getCreatedBy(),
+                appointment.getStatus()
+        );
+    }
+
+    public Appointment saveAppointment(AppointmentRequestDTO appointmentRequest) {
+        var pacient = userService.getUserById(appointmentRequest.pacientId());
+        var responsible = userService.getUserById(appointmentRequest.responsibleId());
+        var student = userService.getUserById(appointmentRequest.studentId());
         Appointment newAppointment = new Appointment();
         newAppointment.setPacient(pacient);
         newAppointment.setResponsible(responsible);
         newAppointment.setStudent(student);
-        newAppointment.setObservations(appointmentRequest.getObservations());
-        newAppointment.setSchedule(appointmentRequest.getSchedule());
-        newAppointment.setCreatedBy(appointmentRequest.getCreatedBy());
+        newAppointment.setObservations(appointmentRequest.observations());
+        newAppointment.setSchedule(appointmentRequest.schedule());
+        newAppointment.setCreatedBy(appointmentRequest.createdBY());
+        newAppointment.setStatus(appointmentRequest.status());
         return appointmentRepository.save(newAppointment);
     }
 
-    public List<Appointment> getAllAppointments() {
-        return  appointmentRepository.findAll();
+    public List<AppointmentResponseDTO> getAllAppointments() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+        return  appointments.stream().map(appointment -> convertToResponseDTO(appointment)).toList();
     }
 
     public Appointment getAppointmentById(UUID id) {
@@ -53,28 +71,29 @@ public class AppointmentService {
         }
     }
 
-    public Appointment updateAppointmentById(UUID id, AppointmentRequest newAppointmentData) {
+    public Appointment updateAppointmentById(UUID id, AppointmentRequestDTO newAppointmentData) {
         Optional<Appointment> appointment = appointmentRepository.findById(id);
         if (appointment.isPresent()) {
             Appointment appointmentToUpdate = appointment.get();
-            if (newAppointmentData.getResponsibleId() != null) {
-                appointmentToUpdate.setResponsible(userService.getUserById(newAppointmentData.getResponsibleId()));
+            if (newAppointmentData.responsibleId() != null) {
+                appointmentToUpdate.setResponsible(userService.getUserById(newAppointmentData.responsibleId()));
             }
-            if (newAppointmentData.getPacientId() != null) {
-                appointmentToUpdate.setPacient(userService.getUserById(newAppointmentData.getPacientId()));
+            if (newAppointmentData.pacientId() != null) {
+                appointmentToUpdate.setPacient(userService.getUserById(newAppointmentData.pacientId()));
             }
-            if (newAppointmentData.getStudentId() != null) {
-                appointmentToUpdate.setStudent(userService.getUserById(newAppointmentData.getStudentId()));
+            if (newAppointmentData.studentId() != null) {
+                appointmentToUpdate.setStudent(userService.getUserById(newAppointmentData.studentId()));
             }
-            if (newAppointmentData.getObservations() != null) {
-                appointmentToUpdate.setObservations(newAppointmentData.getObservations());
+            if (newAppointmentData.observations() != null) {
+                appointmentToUpdate.setObservations(newAppointmentData.observations());
             }
-            if (newAppointmentData.getCreatedBy() != null) {
-                appointmentToUpdate.setCreatedBy(newAppointmentData.getCreatedBy());
+            if (newAppointmentData.createdBY() != null) {
+                appointmentToUpdate.setCreatedBy(newAppointmentData.createdBY());
             }
-            if (newAppointmentData.getSchedule() != null) {
-                appointmentToUpdate.setSchedule(newAppointmentData.getSchedule());
+            if (newAppointmentData.schedule() != null) {
+                appointmentToUpdate.setSchedule(newAppointmentData.schedule());
             }
+            appointmentToUpdate.setStatus(newAppointmentData.status());
 
             return appointmentRepository.save(appointmentToUpdate);
         }

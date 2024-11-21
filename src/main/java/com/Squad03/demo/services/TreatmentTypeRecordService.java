@@ -1,6 +1,7 @@
 package com.Squad03.demo.services;
 
-import com.Squad03.demo.dto.TreatmentTypeRecordDTO;
+import com.Squad03.demo.dto.TreatmentTypeRecordRequestDTO;
+import com.Squad03.demo.dto.TreatmentTypeRecordResponseDTO;
 import com.Squad03.demo.models.TreatmentType;
 import com.Squad03.demo.models.TreatmentTypeRecord;
 import com.Squad03.demo.models.User;
@@ -27,8 +28,20 @@ public class TreatmentTypeRecordService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<TreatmentTypeRecord> getAllTreatmentTypeRecords() {
-        return treatmentTypeRecordRepository.findAll();
+    public TreatmentTypeRecordResponseDTO convertToTreatmentTypeRecordDTO(TreatmentTypeRecord treatmentTypeRecord){
+        return  new TreatmentTypeRecordResponseDTO(
+                treatmentTypeRecord.getId(),
+                treatmentTypeRecord.getTreatmentType(),
+                treatmentTypeRecord.getResponsible().getId(),
+                treatmentTypeRecord.getResponsible().getName(),
+                treatmentTypeRecord.getStudent().getId(),
+                treatmentTypeRecord.getStudent().getName()
+        );
+    }
+
+    public List<TreatmentTypeRecordResponseDTO> getAllTreatmentTypeRecords() {
+        List<TreatmentTypeRecord> treatmentTypeRecords = treatmentTypeRecordRepository.findAll();
+        return treatmentTypeRecords.stream().map(treatmentTypeRecord -> convertToTreatmentTypeRecordDTO(treatmentTypeRecord)).toList();
     }
 
     public TreatmentTypeRecord getTreatmentTypeRecordById(UUID id) {
@@ -36,36 +49,36 @@ public class TreatmentTypeRecordService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Registro de tratamento não encontrado!"));
     }
 
-    public TreatmentTypeRecord saveTreatmentTypeRecord(TreatmentTypeRecordDTO dto) {
+    public TreatmentTypeRecord saveTreatmentTypeRecord(TreatmentTypeRecordRequestDTO dto) {
         TreatmentTypeRecord treatmentTypeRecord = new TreatmentTypeRecord();
 
-        TreatmentType treatmentType = treatmentTypeRepository.findById(dto.getTreatmentTypeId())
+        TreatmentType treatmentType = treatmentTypeRepository.findById(dto.treatmentTypeId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Tipo de tratamento não encontrado!"));
         treatmentTypeRecord.setTreatmentType(treatmentType);
 
-        User responsible = userRepository.findById(dto.getResponsibleId())
+        User responsible = userRepository.findById(dto.responsibleId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Responsável não encontrado!"));
         treatmentTypeRecord.setResponsible(responsible);
 
-        User student = userRepository.findById(dto.getStudentId())
+        User student = userRepository.findById(dto.studentId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Estudante não encontrado!"));
         treatmentTypeRecord.setStudent(student);
 
         return treatmentTypeRecordRepository.save(treatmentTypeRecord);
     }
 
-    public TreatmentTypeRecord updateTreatmentTypeRecordById(UUID id, TreatmentTypeRecordDTO dto) {
+    public TreatmentTypeRecord updateTreatmentTypeRecordById(UUID id, TreatmentTypeRecordRequestDTO dto) {
         TreatmentTypeRecord existingRecord = getTreatmentTypeRecordById(id);
 
-        TreatmentType treatmentType = treatmentTypeRepository.findById(dto.getTreatmentTypeId())
+        TreatmentType treatmentType = treatmentTypeRepository.findById(dto.treatmentTypeId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Tipo de tratamento não encontrado! "));
         existingRecord.setTreatmentType(treatmentType);
 
-        User responsible = userRepository.findById(dto.getResponsibleId())
+        User responsible = userRepository.findById(dto.responsibleId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Responsável não encontrado! "));
         existingRecord.setResponsible(responsible);
 
-        User student = userRepository.findById(dto.getStudentId())
+        User student = userRepository.findById(dto.studentId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, " Estudante não encontrado! "));
         existingRecord.setStudent(student);
 

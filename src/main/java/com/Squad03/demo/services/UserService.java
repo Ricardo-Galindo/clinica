@@ -1,4 +1,5 @@
 package com.Squad03.demo.services;
+import com.Squad03.demo.dto.UserResponseDTO;
 import com.Squad03.demo.models.User;
 import com.Squad03.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,21 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public UserResponseDTO convertToResponseDTO(User user){
+        return  new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getUserType().toString(),
+                user.getEmail(),
+                user.getPhone(),
+                user.getCreatedBy(),
+                user.getDateOfBirth()
+        );
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(user -> convertToResponseDTO(user)).toList();
     }
 
     public User getUserById(UUID id){
