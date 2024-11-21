@@ -1,6 +1,7 @@
 package com.Squad03.demo.controllers;
 
-import com.Squad03.demo.dto.TreatmentTypeRecordDTO;
+import com.Squad03.demo.dto.TreatmentTypeRecordRequestDTO;
+import com.Squad03.demo.dto.TreatmentTypeRecordResponseDTO;
 import com.Squad03.demo.models.TreatmentTypeRecord;
 import com.Squad03.demo.services.TreatmentTypeRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +20,30 @@ public class TreatmentTypeRecordController {
     private TreatmentTypeRecordService treatmentTypeRecordService;
 
     @GetMapping
-    public ResponseEntity<List<TreatmentTypeRecord>> getAllTreatmentTypeRecords() {
-        return new ResponseEntity<>(treatmentTypeRecordService.getAllTreatmentTypeRecords(), HttpStatus.OK);
+    public ResponseEntity<List<TreatmentTypeRecordResponseDTO>> getAllTreatmentTypeRecords() {
+        List<TreatmentTypeRecordResponseDTO> allTreatmentTypeRecords = treatmentTypeRecordService.getAllTreatmentTypeRecords();
+        return ResponseEntity.status(HttpStatus.OK).body(allTreatmentTypeRecords);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TreatmentTypeRecord> getTreatmentTypeRecordById(@PathVariable UUID id) {
-        return new ResponseEntity<>(treatmentTypeRecordService.getTreatmentTypeRecordById(id), HttpStatus.OK);
+    public ResponseEntity<TreatmentTypeRecordResponseDTO> getTreatmentTypeRecordById(@PathVariable UUID id) {
+        TreatmentTypeRecord currentTreatmentTypeRecord = treatmentTypeRecordService.getTreatmentTypeRecordById(id);
+        TreatmentTypeRecordResponseDTO dto = treatmentTypeRecordService.convertToTreatmentTypeRecordDTO(currentTreatmentTypeRecord);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @PostMapping
-    public ResponseEntity<TreatmentTypeRecord> createTreatmentTypeRecord(@RequestBody TreatmentTypeRecordDTO dto) {
-        return new ResponseEntity<>(treatmentTypeRecordService.saveTreatmentTypeRecord(dto), HttpStatus.CREATED);
+    public ResponseEntity<TreatmentTypeRecordResponseDTO> createTreatmentTypeRecord(@RequestBody TreatmentTypeRecordRequestDTO dto) {
+        TreatmentTypeRecord treatmentTypeRecord = treatmentTypeRecordService.saveTreatmentTypeRecord(dto);
+        TreatmentTypeRecordResponseDTO treatmentTypeRecordResponseDTO = treatmentTypeRecordService.convertToTreatmentTypeRecordDTO(treatmentTypeRecord);
+        return ResponseEntity.status(HttpStatus.CREATED).body(treatmentTypeRecordResponseDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TreatmentTypeRecord> updateTreatmentTypeRecord(@PathVariable UUID id, @RequestBody TreatmentTypeRecordDTO dto) {
-        return new ResponseEntity<>(treatmentTypeRecordService.updateTreatmentTypeRecordById(id, dto), HttpStatus.OK);
+    public ResponseEntity<TreatmentTypeRecordResponseDTO> updateTreatmentTypeRecord(@PathVariable UUID id, @RequestBody TreatmentTypeRecordRequestDTO dto) {
+        TreatmentTypeRecord treatmentTypeRecordToUpdate = treatmentTypeRecordService.updateTreatmentTypeRecordById(id, dto);
+        TreatmentTypeRecordResponseDTO treatmentTypeRecordResponseDTO = treatmentTypeRecordService.convertToTreatmentTypeRecordDTO(treatmentTypeRecordToUpdate);
+        return ResponseEntity.status(HttpStatus.OK).body(treatmentTypeRecordResponseDTO);
     }
 
     @DeleteMapping("/{id}")

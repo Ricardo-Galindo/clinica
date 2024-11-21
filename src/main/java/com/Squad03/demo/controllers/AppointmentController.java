@@ -1,6 +1,7 @@
 package com.Squad03.demo.controllers;
 
-import com.Squad03.demo.dto.AppointmentRequest;
+import com.Squad03.demo.dto.AppointmentRequestDTO;
+import com.Squad03.demo.dto.AppointmentResponseDTO;
 import com.Squad03.demo.models.Appointment;
 import com.Squad03.demo.services.AppointmentService;
 import jakarta.validation.Valid;
@@ -22,27 +23,30 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Appointment> createAppointment(@Valid @RequestBody AppointmentRequest appointmentRequest) {
+    public ResponseEntity<AppointmentResponseDTO> createAppointment(@Valid @RequestBody AppointmentRequestDTO appointmentRequest) {
         Appointment newAppointment = appointmentService.saveAppointment(appointmentRequest);
-        return  ResponseEntity.status(HttpStatus.OK).body(newAppointment);
+        AppointmentResponseDTO dto = appointmentService.convertToResponseDTO(newAppointment);
+        return  ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Appointment> getAppointmentById(@PathVariable UUID id){
+    public ResponseEntity<AppointmentResponseDTO> getAppointmentById(@PathVariable UUID id){
         Appointment currentAppointment = appointmentService.getAppointmentById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(currentAppointment);
+        AppointmentResponseDTO dto = appointmentService.convertToResponseDTO(currentAppointment);
+        return ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @GetMapping
-    public ResponseEntity<List<Appointment>> getAllAppointments() {
-        List<Appointment> allAppointments = appointmentService.getAllAppointments();
+    public ResponseEntity<List<AppointmentResponseDTO>> getAllAppointments() {
+        List<AppointmentResponseDTO> allAppointments = appointmentService.getAllAppointments();
         return ResponseEntity.status(HttpStatus.OK).body(allAppointments);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Appointment> updateAppointment(@PathVariable UUID id, @Valid @RequestBody AppointmentRequest appointmentRequest) {
+    public ResponseEntity<AppointmentResponseDTO> updateAppointment(@PathVariable UUID id, @Valid @RequestBody AppointmentRequestDTO appointmentRequest) {
         Appointment updatedAppointment = appointmentService.updateAppointmentById(id, appointmentRequest);
-        return  ResponseEntity.status(HttpStatus.OK).body(updatedAppointment);
+        AppointmentResponseDTO dto = appointmentService.convertToResponseDTO(updatedAppointment);
+        return  ResponseEntity.status(HttpStatus.OK).body(dto);
     }
 
     @DeleteMapping("/{id}")
