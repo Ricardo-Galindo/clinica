@@ -18,6 +18,9 @@ public class TreatmentType {
     @NotBlank()
     private String schedule;
 
+    @OneToOne(mappedBy = "treatmentType",cascade = CascadeType.ALL)
+    private Appointment appointment;
+
     public String getType() {
         return type;
     }

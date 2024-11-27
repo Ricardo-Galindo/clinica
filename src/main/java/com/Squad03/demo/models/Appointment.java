@@ -2,7 +2,10 @@ package com.Squad03.demo.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -24,8 +27,14 @@ public class Appointment {
     @JoinColumn(name = "student_id",nullable = false, referencedColumnName = "id")
     private User student;
 
-    @Column(nullable = false,length = 30)
-    private String schedule;
+    @OneToOne
+    @JoinColumn(name = "treatment_type_id",nullable = false,referencedColumnName = "id")
+    private TreatmentType treatmentType;
+
+
+    @CreationTimestamp
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime schedule = LocalDateTime.now();
 
     @Column(nullable = true,length = 255)
     private String observations;
@@ -57,6 +66,14 @@ public class Appointment {
         CONFIRMED,
         PENDING,
         CANCELLED
+    }
+
+    public TreatmentType getTreatmentType() {
+        return treatmentType;
+    }
+
+    public void setTreatmentType(TreatmentType treatmentType) {
+        this.treatmentType = treatmentType;
     }
 
     public CreatedByType getCreatedBy() {
@@ -104,11 +121,11 @@ public class Appointment {
         this.student = student;
     }
 
-    public String getSchedule() {
+    public LocalDateTime getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(String schedule) {
+    public void setSchedule(LocalDateTime schedule) {
         this.schedule = schedule;
     }
 }

@@ -21,6 +21,9 @@ public class AppointmentService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TreatmentTypeService treatmentTypeService;
+
     public AppointmentService(AppointmentRepository appointmentRepository){
         this.appointmentRepository = appointmentRepository;
     }
@@ -37,7 +40,8 @@ public class AppointmentService {
                 appointment.getSchedule(),
                 appointment.getObservations(),
                 appointment.getCreatedBy(),
-                appointment.getStatus()
+                appointment.getStatus(),
+                appointment.getTreatmentType()
         );
     }
 
@@ -45,12 +49,13 @@ public class AppointmentService {
         var pacient = userService.getUserById(appointmentRequest.pacientId());
         var responsible = userService.getUserById(appointmentRequest.responsibleId());
         var student = userService.getUserById(appointmentRequest.studentId());
+        var treatmentType = treatmentTypeService.getTreatmentTypeById(appointmentRequest.treatmentTypeId());
         Appointment newAppointment = new Appointment();
         newAppointment.setPacient(pacient);
         newAppointment.setResponsible(responsible);
         newAppointment.setStudent(student);
+        newAppointment.setTreatmentType(treatmentType);
         newAppointment.setObservations(appointmentRequest.observations());
-        newAppointment.setSchedule(appointmentRequest.schedule());
         newAppointment.setCreatedBy(appointmentRequest.createdBY());
         newAppointment.setStatus(appointmentRequest.status());
         return appointmentRepository.save(newAppointment);
@@ -89,9 +94,8 @@ public class AppointmentService {
             }
             if (newAppointmentData.createdBY() != null) {
                 appointmentToUpdate.setCreatedBy(newAppointmentData.createdBY());
-            }
-            if (newAppointmentData.schedule() != null) {
-                appointmentToUpdate.setSchedule(newAppointmentData.schedule());
+            }if(newAppointmentData.treatmentTypeId() != null){
+                appointmentToUpdate.setTreatmentType(treatmentTypeService.getTreatmentTypeById(newAppointmentData.treatmentTypeId()));
             }
             appointmentToUpdate.setStatus(newAppointmentData.status());
 
